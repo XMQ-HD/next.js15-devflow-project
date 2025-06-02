@@ -2,9 +2,15 @@ import React from "react";
 
 const page = () => {
   return (
-    <h1 className="text-3xl text-light-500">
-      Welcome to Next.jsnihaoooooooggggggggg
-    </h1>
+    <div>
+      <h1 className="h1-bold">Welcome to Next.jsnihaoooooooggggggggg</h1>
+      <h1 className="h1-bold font-inter">
+        Welcome to Next.jsnihaoooooooggggggggg
+      </h1>
+      <h1 className="h1-bold font-space-grotesk">
+        Welcome to Next.jsnihaoooooooggggggggg
+      </h1>
+    </div>
   );
 };
 
