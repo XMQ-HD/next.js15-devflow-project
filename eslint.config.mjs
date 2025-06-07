@@ -1,5 +1,6 @@
 import { dirname } from "path";
 import { fileURLToPath } from "url";
+
 import { FlatCompat } from "@eslint/eslintrc";
 
 const __filename = fileURLToPath(import.meta.url);
@@ -14,7 +15,7 @@ const eslintConfig = [
     "next/core-web-vitals",
     "next/typescript",
     "standard",
-    //"plugin:tailwindcss/recommended",
+    // "plugin:tailwindcss/recommended",
     "prettier"
   ),
   {
