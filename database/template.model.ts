@@ -4,6 +4,6 @@ export interface IModel {}
 
 const ModelSchema = new Schema<IModel>({}, { timestamps: true });
 
-const Model = models?.Account || model<IModel>("Account", ModelSchema);
+const Model = models?.Model || model<IModel>("Model", ModelSchema);
 
 export default Model;
