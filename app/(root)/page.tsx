@@ -10,6 +10,7 @@ import ROUTES from "@/constants/routes";
 interface SearchParams {
   searchParams: Promise<{ [key: string]: string }>;
 }
+
 const questions = [
   {
     _id: "1",
