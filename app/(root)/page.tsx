@@ -6,10 +6,6 @@ import HomeFilter from "@/components/filters/HomeFilter";
 import LocalSearch from "@/components/search/LocalSearch";
 import { Button } from "@/components/ui/button";
 import ROUTES from "@/constants/routes";
-import handleError from "@/lib/handles/error";
-import dbConnect from "@/lib/mongoose";
-import { api } from "@/lib/api";
-import { auth } from "@/auth";
 
 interface SearchParams {
   searchParams: Promise<{ [key: string]: string }>;
@@ -57,9 +53,6 @@ const questions = [
 ];
 
 const Home = async ({ searchParams }: SearchParams) => {
-  const session = await auth();
-  console.log("Session: ", session);
-
   const { query = "", filter = "" } = await searchParams;
 
   // Filter the list of questions based on search query and optional tag filter
