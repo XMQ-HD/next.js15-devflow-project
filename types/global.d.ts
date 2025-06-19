@@ -37,3 +37,13 @@ type ErrorResponse = ActionResponse<undefined> & { success: false };
 
 type APIErrorResponse = NextResponse<ErrorResponse>;
 type APIResponse<T = null> = NextResponse<SuccessResponse<T> | ErrorResponse>;
+
+interface RouteParams {
+  // the record <string, string> is a utility type that defines an object structure or each property is a key value pair, both of which are strings.
+  /* The difference between params and searchparams:
+     1. params: /questions/id
+     2. searchparams: /questions? tag=javascript
+   */
+  params: Promise<Record<string, string>>;
+  searchParams: Promise<Record<string, string>>;
+}
