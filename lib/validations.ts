@@ -1,3 +1,4 @@
+import Question from "@/database/question.model";
 import { z } from "zod";
 
 export const SignInSchema = z.object({
@@ -123,4 +124,12 @@ export const SignInWithOAuthSchema = z.object({
       .email({ message: "Please provide a valid email address." }),
     image: z.string().url("Invalid image URL").optional(),
   }),
+});
+
+export const EditQuestionSchema = AskQuestionSchema.extend({
+  questionId: z.string().min(1, { message: "Question ID is required." }),
+});
+
+export const GetQuestionSchema = z.object({
+  questionId: z.string().min(1, { message: "Question ID is required" }),
 });
