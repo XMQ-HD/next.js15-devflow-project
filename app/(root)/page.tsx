@@ -6,68 +6,23 @@ import HomeFilter from "@/components/filters/HomeFilter";
 import LocalSearch from "@/components/search/LocalSearch";
 import { Button } from "@/components/ui/button";
 import ROUTES from "@/constants/routes";
+import { getQuestions } from "@/lib/actions/question.action";
 
 interface SearchParams {
   searchParams: Promise<{ [key: string]: string }>;
 }
 
-const questions = [
-  {
-    _id: "1",
-    title: "How to learn React?",
-    description: "I want to learn React, can anyone help me?",
-    tags: [
-      { _id: "1", name: "React" },
-      { _id: "2", name: "JavaScript" },
-    ],
-    author: {
-      _id: "1",
-      name: "John Doe",
-      image:
-        "https://static.vecteezy.com/system/resources/previews/002/002/403/non_2x/man-with-beard-avatar-character-isolated-icon-free-vector.jpg",
-    },
-    upvotes: 10,
-    answers: 5,
-    views: 100,
-    createdAt: new Date("2024-2-12"),
-  },
-  {
-    _id: "2",
-    title: "How to learn JavaScript?",
-    description: "I want to learn JavaScript, can anyone help me?",
-    tags: [
-      { _id: "1", name: "JavaScript" },
-      { _id: "2", name: "JavaScript" },
-    ],
-    author: {
-      _id: "1",
-      name: "John Doe",
-      image:
-        "https://static.vecteezy.com/system/resources/previews/002/002/403/non_2x/man-with-beard-avatar-character-isolated-icon-free-vector.jpg",
-    },
-    upvotes: 10,
-    answers: 5,
-    views: 100,
-    createdAt: new Date("2024-2-12"),
-  },
-];
-
 const Home = async ({ searchParams }: SearchParams) => {
-  const { query = "", filter = "" } = await searchParams;
+  const { page, pageSize, query, filter } = await searchParams;
 
-  // Filter the list of questions based on search query and optional tag filter
-  const filteredQuestions = questions.filter((question) => {
-    // Check if the question title includes the search query.
-    const matchesQuery = question.title
-      .toLowerCase()
-      .includes(query.toLowerCase());
-    // If a filter is provided, check if the first tag matches the filter.
-    // If no filter is provided, this condition is automatically true(that means all questions been provided)
-    const matchesFilter = filter
-      ? question.tags[0].name.toLowerCase() === filter.toLowerCase()
-      : true;
-    return matchesQuery && matchesFilter;
+  const { success, data, error } = await getQuestions({
+    page: Number(page) || 1,
+    pageSize: Number(pageSize) || 10,
+    query: query || "",
+    filter: filter || "",
   });
+
+  const { questions } = data || {};
 
   return (
     <>
@@ -90,11 +45,25 @@ const Home = async ({ searchParams }: SearchParams) => {
         />
       </section>
       <HomeFilter />
-      <div className="mt-10 flex w-full flex-col gap-6">
-        {filteredQuestions.map((question) => (
-          <QuestionCard key={question._id} question={question} />
-        ))}
-      </div>
+      {success ? (
+        <div className="mt-10 flex w-full flex-col gap-6">
+          {questions && questions.length > 0 ? (
+            questions.map((question) => (
+              <QuestionCard key={question._id} question={question} />
+            ))
+          ) : (
+            <div className="mt-10 flex w-full items-center justify-center">
+              <p className="text-dark400_light700">No questions found</p>
+            </div>
+          )}
+        </div>
+      ) : (
+        <div className="mt-10 flex w-full items-center justify-center">
+          <p className="text-dark400_light700">
+            {error?.message || "Failed to fetch questions"}
+          </p>
+        </div>
+      )}
     </>
   );
 };
