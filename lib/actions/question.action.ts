@@ -18,8 +18,6 @@ import {
   PaginatedSearchParams,
 } from "@/types/global";
 import { NotFoundError, UnauthorizedError } from "../http-errors";
-import { Action } from "sonner";
-import { boolean } from "zod";
 
 export async function createQuestion(
   params: CreateQuestionParams
@@ -146,7 +144,7 @@ export async function editQuestion(
 
     if (tagsToAdd.length > 0) {
       for (const tag of tagsToAdd) {
-        const existingTag = await Tag.findOneAndUpdate(
+        const newTag = await Tag.findOneAndUpdate(
           {
             name: { $regex: `^${tag}$`, $options: "i" },
           },
@@ -154,13 +152,13 @@ export async function editQuestion(
           { upsert: true, new: true, session }
         );
 
-        if (existingTag) {
+        if (newTag) {
           newTagDocuments.push({
-            tag: existingTag._id,
+            tag: newTag._id,
             question: questionId,
           });
 
-          question.tags.push(existingTag._id);
+          question.tags.push(newTag._id);
         }
       }
     }

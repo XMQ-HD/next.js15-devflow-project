@@ -8,7 +8,7 @@ interface Props<T> {
   success: boolean;
   error?: {
     message: string;
-    details?: Record<string, string[]>;
+    details?: Record<string, string>[];
   };
   data: T[] | null | undefined;
   empty: {
