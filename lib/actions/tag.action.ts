@@ -12,8 +12,9 @@ import {
   ErrorResponse,
 } from "@/types/global";
 import { GetTagQuestionsParams } from "@/types/action";
-import { filter } from "@mdxeditor/editor";
 import { NotFoundError } from "../http-errors";
+import { IQuestion } from "@/database/question.model";
+import { ITag } from "@/database/tag.model";
 
 export const getTags = async (
   params: PaginatedSearchParams
