@@ -337,9 +337,6 @@ export async function incrementViews(
 
     await question.save();
 
-    // revalidate the data for a specific path make sure the user see the most up-to-date information without delay
-    revalidatePath(ROUTES.QUESTION(questionId));
-
     return {
       success: true,
       data: { views: question.views },
