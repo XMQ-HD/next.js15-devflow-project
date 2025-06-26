@@ -67,7 +67,7 @@ export async function createAnswer(
 
 export async function getAnswers(params: GetAnswerParams): Promise<
   ActionResponse<{
-    answer: Answer[];
+    answers: Answer[];
     isNext: boolean;
     totalAnswers: number;
   }>
@@ -117,7 +117,7 @@ export async function getAnswers(params: GetAnswerParams): Promise<
     return {
       success: true,
       data: {
-        answer: JSON.parse(JSON.stringify(answers)),
+        answers: JSON.parse(JSON.stringify(answers)),
         isNext,
         totalAnswers,
       },

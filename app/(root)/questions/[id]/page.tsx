@@ -1,3 +1,4 @@
+import AllAnswers from "@/components/answers/AllAnswers";
 import TagCard from "@/components/cards/TagCard";
 import Preview from "@/components/editor/Preview";
 import AnswerForm from "@/components/forms/AnswerForm";
@@ -25,7 +26,7 @@ const QuestionDetails = async ({ params }: RouteParams) => {
 
   const {
     success: answersLoaded,
-    data: ansersResult,
+    data: answersResult,
     error: answersError,
   } = await getAnswers({
     questionId: id,
@@ -34,7 +35,7 @@ const QuestionDetails = async ({ params }: RouteParams) => {
     filter: "latest",
   });
 
-  console.log("Answers", ansersResult);
+  console.log("Answers", answersResult);
 
   const { author, createdAt, answers, views, tags, content, title } = question;
   return (
@@ -104,6 +105,15 @@ const QuestionDetails = async ({ params }: RouteParams) => {
           />
         ))}
       </div>
+
+      <section className="my-5">
+        <AllAnswers
+          data={answersResult?.answers}
+          success={answersLoaded}
+          error={answersError}
+          totalAnswers={answersResult?.totalAnswers || 0}
+        />
+      </section>
 
       <section className="my-5">
         <AnswerForm questionId={question._id} />
