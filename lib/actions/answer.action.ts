@@ -1,9 +1,9 @@
 "use server";
 
 import Answer, { IAnswerDoc } from "@/database/answer.model";
-import { CreateAnswerParams } from "@/types/action";
+import { CreateAnswerParams, GetAnswerParams } from "@/types/action";
 import { ActionResponse, ErrorResponse } from "@/types/global";
-import { AnswerServerSchema } from "../validations";
+import { AnswerServerSchema, GetAnswersSchema } from "../validations";
 import action from "../handles/action";
 import handleError from "../handles/error";
 import mongoose from "mongoose";
@@ -62,5 +62,67 @@ export async function createAnswer(
     return handleError(error) as ErrorResponse;
   } finally {
     await session.endSession();
+  }
+}
+
+export async function getAnswers(params: GetAnswerParams): Promise<
+  ActionResponse<{
+    answer: Answer[];
+    isNext: boolean;
+    totalAnswers: number;
+  }>
+> {
+  const validationResult = await action({
+    params,
+    schema: GetAnswersSchema,
+  });
+
+  if (validationResult instanceof Error) {
+    return handleError(validationResult) as ErrorResponse;
+  }
+
+  const { questionId, page = 1, pageSize = 10, filter } = params;
+
+  const skip = (Number(page) - 1) * pageSize;
+  const limit = pageSize;
+
+  let sortCrieria = {};
+
+  switch (filter) {
+    case "latest":
+      sortCrieria = { createdAt: -1 };
+      break;
+    case "oldest":
+      sortCrieria = { createdAt: 1 };
+      break;
+    case "popular":
+      sortCrieria = { upvotes: -1 };
+      break;
+    default:
+      sortCrieria = { createdAt: -1 };
+      break;
+  }
+
+  try {
+    const totalAnswers = await Answer.countDocuments({ question: questionId });
+
+    const answers = await Answer.find({ question: questionId })
+      .populate("author", "_id name image")
+      .sort(sortCrieria)
+      .skip(skip)
+      .limit(limit);
+
+    const isNext = totalAnswers > skip + answers.length;
+
+    return {
+      success: true,
+      data: {
+        answer: JSON.parse(JSON.stringify(answers)),
+        isNext,
+        totalAnswers,
+      },
+    };
+  } catch (error) {
+    return handleError(error) as ErrorResponse;
   }
 }
