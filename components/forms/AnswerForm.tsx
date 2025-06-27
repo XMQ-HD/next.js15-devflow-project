@@ -21,15 +21,24 @@ import Image from "next/image";
 import { useTransition } from "react";
 import { createAnswer } from "@/lib/actions/answer.action";
 import { toast } from "sonner";
+import { useSession } from "next-auth/react";
+import { api } from "@/lib/api";
 
 const Editor = dynamic(() => import("@/components/editor"), {
   // Make sure we turn SSR off
   ssr: false,
 });
 
-const AnswerForm = ({ questionId }: { questionId: string }) => {
+interface Props {
+  questionId: string;
+  questionTitle: string;
+  questionContent: string;
+}
+
+const AnswerForm = ({ questionId, questionTitle, questionContent }: Props) => {
   const [isAnswering, startAnsweringTransition] = useTransition();
   const [isAISubmitting, setIsAISubmitting] = useState(false);
+  const session = useSession();
 
   const editorRef = useRef<MDXEditorMethods>(null);
 
@@ -51,12 +60,61 @@ const AnswerForm = ({ questionId }: { questionId: string }) => {
         toast.success("success", {
           description: "Your answer has been posted successfully!",
         });
+
+        if (editorRef.current) {
+          editorRef.current.setMarkdown("");
+        }
       } else {
         toast.error("Error", {
           description: result.error?.message,
         });
       }
     });
+  };
+
+  const generateAIAnswer = async () => {
+    if (session.status !== "authenticated") {
+      return toast("Please login", {
+        description: "You need to be logged in to use AI features.",
+      });
+    }
+
+    setIsAISubmitting(true);
+
+    try {
+      const { success, data, error } = await api.ai.getAnswer(
+        questionTitle,
+        questionContent
+      );
+
+      if (!success) {
+        return toast.error("Error", {
+          description: error?.message,
+        });
+      }
+
+      const formattedAnswer = data.replace(/<br>/g, " ").toString().trim();
+
+      if (editorRef.current) {
+        editorRef.current.setMarkdown(formattedAnswer);
+
+        form.setValue("content", formattedAnswer);
+        form.trigger("content");
+      }
+
+      toast.success("Success", {
+        description: "AI generated answer has been generated",
+      });
+    } catch (error) {
+      toast.error("Error", {
+        description:
+          error instanceof Error
+            ? error.message
+            : "An unexpected error occurred.",
+      });
+    } finally {
+      setIsAISubmitting(false);
+    }
   };
 
   return (
@@ -68,6 +126,7 @@ const AnswerForm = ({ questionId }: { questionId: string }) => {
         <Button
           className="btn light-border-2 gap-1.5 rounded-md border px-4 py-2.5 text-primary-500 shadow-none dark:text-primary-500"
           disabled={isAISubmitting}
+          onClick={generateAIAnswer}
         >
           {isAISubmitting ? (
             <>
