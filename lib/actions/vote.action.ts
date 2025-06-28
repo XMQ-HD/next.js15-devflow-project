@@ -16,6 +16,8 @@ import action from "../handles/action";
 import handleError from "../handles/error";
 import mongoose, { ClientSession } from "mongoose";
 import { Answer, Question, Vote } from "@/database";
+import { revalidatePath } from "next/cache";
+import ROUTES from "@/constants/routes";
 
 export async function updateVoteCount(
   params: UpdateVoteCountParams,
@@ -83,7 +85,7 @@ export async function createVote(
     }).session(session);
 
     if (existingVote) {
-      if (existingVote === voteType) {
+      if (existingVote.voteType === voteType) {
         // If the user have voted this type before, now delete vote record and substract vote number.
         await Vote.deleteOne({ _id: existingVote._id }).session(session);
         await updateVoteCount(
@@ -103,12 +105,31 @@ export async function createVote(
           session
         );
         //Todo update the opposite vote type, the user cannot voted two type vote either.
+        await updateVoteCount(
+          {
+            targetId,
+            targetType,
+            voteType: existingVote.voteType,
+            change: -1,
+          },
+          session
+        );
       }
     } else {
       // If the user has not yet, create a vote.
-      await Vote.create([{ targetId, targetType, voteType, change: 1 }], {
-        session,
-      });
+      await Vote.create(
+        [
+          {
+            author: userId,
+            actionId: targetId,
+            actionType: targetType,
+            voteType,
+          },
+        ],
+        {
+          session,
+        }
+      );
 
       await updateVoteCount(
         { targetId, targetType, voteType, change: 1 },
@@ -118,6 +139,8 @@ export async function createVote(
 
     await session.commitTransaction();
     session.endSession();
+
+    revalidatePath(ROUTES.QUESTION(targetId));
 
     return { success: true };
   } catch (error) {
@@ -161,7 +184,7 @@ export async function hasVoted(
       success: true,
       data: {
         hasUpvoted: vote.voteType === "upvote",
-        hasDownvoted: vote.voteType === "doenvote",
+        hasDownvoted: vote.voteType === "downvote",
       },
     };
   } catch (error) {
