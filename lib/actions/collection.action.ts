@@ -107,7 +107,7 @@ export async function hasSavedQuestion(
   }
 }
 
-export async function getSavedQuestion(
+export async function getSavedQuestions(
   params: PaginatedSearchParams
 ): Promise<ActionResponse<{ collection: Collection[]; isNext: boolean }>> {
   const validationResult = await action({
@@ -161,7 +161,7 @@ export async function getSavedQuestion(
           as: "question.author",
         },
       },
-      { $unwind: "question.author" },
+      { $unwind: "$question.author" },
       {
         $lookup: {
           from: "tags",
@@ -188,13 +188,15 @@ export async function getSavedQuestion(
       { $count: "count" },
     ]);
 
+    const totalCountValue = totalCount?.count ?? 0;
+
     pipeline.push({ $sort: sortCriteria }, { $skip: skip }, { $limit: limit });
     // This removes all other fields from the result to simplify the response structure, only remain the question and author.
     pipeline.push({ $project: { question: 1, author: 1 } });
 
     const questions = await Collection.aggregate(pipeline);
 
-    const isNext = totalCount.count > skip + questions.length;
+    const isNext = totalCountValue.count > skip + questions.length;
 
     return {
       success: true,
