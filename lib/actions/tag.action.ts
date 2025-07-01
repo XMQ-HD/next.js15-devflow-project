@@ -13,8 +13,6 @@ import {
 } from "@/types/global";
 import { GetTagQuestionsParams } from "@/types/action";
 import { NotFoundError } from "../http-errors";
-import { IQuestion } from "@/database/question.model";
-import { ITag } from "@/database/tag.model";
 
 export const getTags = async (
   params: PaginatedSearchParams
@@ -87,25 +85,57 @@ export const getTagQuestions = async (
     schema: GetTagQuestionsSchema,
   });
 
+  console.log(validationResult);
+
   if (validationResult instanceof Error) {
     return handleError(validationResult) as ErrorResponse;
   }
 
-  const { tagId, page = 1, pageSize = 10, query } = params;
+  const { tagId, page = 1, pageSize = 10, query, filter } = params;
   const skip = (Number(page) - 1) * pageSize;
   const limit = Number(pageSize);
+
+  const filterQuery: FilterQuery<typeof Question> = {
+    tags: { $in: [tagId] },
+  };
+
+  if (query) {
+    filterQuery.$or = [
+      { title: { $regex: new RegExp(query, "i") } },
+      { content: { $regex: new RegExp(query, "i") } },
+    ];
+  }
+
+  let sortCriteria = {};
+
+  switch (filter) {
+    case "newest":
+      sortCriteria = { createdAt: -1 };
+      break;
+
+    case "unanswered":
+      filterQuery.answers = 0;
+      sortCriteria = { createdAt: -1 };
+      break;
+
+    case "popular":
+      sortCriteria = { upvotes: -1 };
+      break;
+
+    case "mostviewed":
+      sortCriteria = { views: -1 };
+      break;
+
+    default:
+      sortCriteria = { createdAt: -1 };
+      break;
+  }
+  console.log("Received filter:", filter);
 
   try {
     const tag = await Tag.findById(tagId);
     if (!tag) throw new NotFoundError("Tag not found");
 
-    const filterQuery: FilterQuery<typeof Question> = {
-      tags: { $in: [tagId] },
-    };
-
-    if (query) {
-      filterQuery.title = { $regex: query, $options: "i" };
-    }
     const totalQuestions = await Question.countDocuments(filterQuery);
 
     const questions = await Question.find(filterQuery)
@@ -114,6 +144,8 @@ export const getTagQuestions = async (
         { path: "author", select: "name image" },
         { path: "tags", select: "name" },
       ])
+      .lean()
+      .sort(sortCriteria)
       .skip(skip)
       .limit(limit);
 
