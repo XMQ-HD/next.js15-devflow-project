@@ -9,7 +9,6 @@ interface Props {
 }
 
 const ProfileLink = ({ imgUrl, href, title }: Props) => {
-  console.log(22222);
   return (
     <div className="flex-center gap-1">
       <Image src={imgUrl} alt={title} width={20} height={20} />
