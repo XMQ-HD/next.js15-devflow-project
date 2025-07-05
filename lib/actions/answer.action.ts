@@ -1,17 +1,26 @@
 "use server";
 
 import Answer, { IAnswerDoc } from "@/database/answer.model";
-import { CreateAnswerParams, GetAnswerParams } from "@/types/action";
+import {
+  CreateAnswerParams,
+  DeleteAnswerParams,
+  GetAnswerParams,
+} from "@/types/action";
 import { ActionResponse, ErrorResponse } from "@/types/global";
-import { AnswerServerSchema, GetAnswersSchema } from "../validations";
+import {
+  AnswerServerSchema,
+  DeleteAnswerSchema,
+  GetAnswersSchema,
+} from "../validations";
 import action from "../handles/action";
 import handleError from "../handles/error";
 import mongoose from "mongoose";
 import { Question } from "@/database";
-import { NotFoundError } from "../http-errors";
+import { NotFoundError, UnauthorizedError } from "../http-errors";
 import { realmPlugin } from "@mdxeditor/editor";
 import { revalidatePath } from "next/cache";
 import ROUTES from "@/constants/routes";
+import { Vote } from "@/database";
 
 export async function createAnswer(
   params: CreateAnswerParams
@@ -123,6 +132,64 @@ export async function getAnswers(params: GetAnswerParams): Promise<
       },
     };
   } catch (error) {
+    return handleError(error) as ErrorResponse;
+  }
+}
+
+export async function deleteAnswer(
+  params: DeleteAnswerParams
+): Promise<ActionResponse> {
+  const validationResult = await action({
+    params,
+    schema: DeleteAnswerSchema,
+    authorize: true,
+  });
+
+  if (validationResult instanceof Error) {
+    return handleError(validationResult) as ErrorResponse;
+  }
+
+  const { answerId } = validationResult.params!;
+  const { user } = validationResult.session!;
+
+  const session = await mongoose.startSession();
+
+  try {
+    session.startTransaction();
+
+    const answer = await Answer.findById(answerId).session(session);
+    if (!answer) throw new NotFoundError("Answer not found.");
+
+    if (answer.author._id.toString() !== user?.id)
+      throw new UnauthorizedError(
+        "You are not authorized to delete this answer."
+      );
+
+    //Reduce the relate question answers count
+    await Question.findByIdAndUpdate(
+      answer.question,
+      { $inc: { answers: -1 } },
+      { new: true }
+    ).session(session);
+
+    //Delete votes associate with answer
+    await Vote.deleteMany({ actionId: answerId, actionType: "answer" }).session(
+      session
+    );
+
+    //Delete the answer
+    await Answer.findByIdAndDelete(answerId).session(session);
+
+    //Commit transaction
+    await session.commitTransaction();
+    session.endSession();
+
+    //Revalidate to reflect immediate changes on UI
+    revalidatePath(`/profile/${user?.id}`);
+
+    return { success: true };
+  } catch (error) {
+    await session.abortTransaction();
     return handleError(error) as ErrorResponse;
   }
 }
