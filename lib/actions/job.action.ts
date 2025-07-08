@@ -8,7 +8,9 @@ export const fetchLocation = async () => {
 
 export const fetchCountries = async () => {
   try {
-    const response = await fetch("https://restcountries.com/v3.1/all");
+    const response = await fetch(
+      "https://restcountries.com/v3.1/all?fields=name"
+    );
     const result = await response.json();
     return result;
   } catch (error) {
@@ -23,7 +25,6 @@ export const fetchJobs = async (filters: JobFilterParams) => {
     "X-RapidAPI-Key": process.env.NEXT_PUBLIC_RAPID_API_KEY ?? "",
     "X-RapidAPI-Host": "jsearch.p.rapidapi.com",
   };
-
   const response = await fetch(
     `https://jsearch.p.rapidapi.com/search?query=${query}&page=${page}`,
     {
