@@ -8,7 +8,6 @@ import {
   fetchLocation,
 } from "@/lib/actions/job.action";
 import { RouteParams, Job } from "@/types/global";
-import { constants } from "buffer";
 
 const JobPage = async ({ searchParams }: RouteParams) => {
   const { query, location, page } = await searchParams;
