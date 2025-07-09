@@ -1,3 +1,59 @@
+# 💻 DevFlow - Developer Community Platform
+
+A modern full-stack web application inspired by Stack Overflow, built with **Next.js 15**, **MongoDB**, and **Tailwind CSS**. It enables developers to ask questions, share answers, vote, and grow their reputation within a collaborative community.
+
+🔗 **Live Demo**: [https://next-js15-devflow-project.vercel.app/](https://next-js15-devflow-project.vercel.app/)
+
+---
+
+## 🧰 Tech Stack
+
+### Frontend
+- [x] Next.js 15 (App Router)
+- [x] React 18
+- [x] TypeScript
+- [x] Tailwind CSS
+- [x] ShadCN UI
+- [x] Zustand (light state management)
+- [x] React Hook Form
+- [x] Markdown Editor with syntax support
+
+### Backend
+- [x] MongoDB (via Mongoose)
+- [x] API Routes (Next.js handlers)
+- [x] Clerk Authentication (OAuth + JWT)
+
+### DevOps & Tools
+- [x] Deployment: Vercel
+- [x] Code Style: Prettier + ESLint
+- [x] Version Control: Git + GitHub
+
+---
+
+## ✨ Features
+
+- 🔐 **Authentication** with Clerk (Google OAuth and email)
+- 📝 **Ask Questions** using a rich Markdown editor
+- 💬 **Answer Questions** with voting and Markdown formatting
+- 🔍 **Global Search** for questions by keyword
+- 🏷️ **Tag System** for categorizing content
+- ⭐ **Vote System** to upvote/downvote answers
+- 🏅 **Reputation System** that reflects user engagement
+- 👤 **User Profile Pages** showing asked/answered questions
+- ⚡ **Optimized Rendering** with Next.js App Router
+
+---
+
+## 📸 Screenshots
+
+You can add screenshots of your project here:
+
+```markdown
+![Homepage](./screenshots/home.png)
+![Ask Page](./screenshots/ask.png)
+![Answer Page](./screenshots/answer.png)
+
+
 This is a [Next.js](https://nextjs.org) project bootstrapped with [`create-next-app`](https://nextjs.org/docs/app/api-reference/cli/create-next-app).
 
 ## Getting Started
