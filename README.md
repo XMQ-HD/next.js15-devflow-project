@@ -10,11 +10,10 @@ A modern full-stack web application inspired by Stack Overflow, built with **Nex
 
 ### Frontend
 - [x] Next.js 15 (App Router)
-- [x] React 18
+- [x] React 19
 - [x] TypeScript
 - [x] Tailwind CSS
 - [x] ShadCN UI
-- [x] Zustand (light state management)
 - [x] React Hook Form
 - [x] Markdown Editor with syntax support
 
@@ -30,23 +29,83 @@ A modern full-stack web application inspired by Stack Overflow, built with **Nex
 
 ---
 
-## ✨ Features
+## 🔥 Key Features
 
-- 🔐 **Authentication** with Clerk (Google OAuth and email)
-- 📝 **Ask Questions** using a rich Markdown editor
-- 💬 **Answer Questions** with voting and Markdown formatting
-- 🔍 **Global Search** for questions by keyword
-- 🏷️ **Tag System** for categorizing content
-- ⭐ **Vote System** to upvote/downvote answers
-- 🏅 **Reputation System** that reflects user engagement
-- 👤 **User Profile Pages** showing asked/answered questions
-- ⚡ **Optimized Rendering** with Next.js App Router
+✅ **Authentication**  
+Secure sign-in with NextAuth, supporting Email/Password, Google, and GitHub.
+
+🏠 **Home Page**  
+Displays questions with filters, search, and pagination for easy navigation.
+
+🎯 **Recommendations**  
+Personalized question suggestions shown on the home page.
+
+📐 **Complex Layout**  
+Organized design with popular questions and tags always in view.
+
+📝 **Question Details**  
+View questions with rich content, including images, links, and code blocks.
+
+👍 **Voting on Questions**  
+Upvote or downvote questions to highlight helpful content.
+
+👁️ **View Counter**  
+Track how many times each question has been viewed.
+
+🔖 **Bookmarking**  
+Save questions to revisit later from your profile or collection.
+
+🖊️ **Answer Posting**  
+MDX editor with light/dark mode support for formatting rich answers.
+
+🤖 **AI Answer Generation**  
+Generate smart, AI-powered answers to questions on demand.
+
+🔽 **Answer Filtering**  
+Sort answers by newest or most voted, with pagination for navigation.
+
+🔼 **Answer Voting**  
+Upvote or downvote answers to reflect their quality.
+
+📚 **Collections**  
+Organize your saved questions with filters, search, and pagination.
+
+👥 **Community Page**  
+Browse all registered users with search, filters, and pagination support.
+
+🙋 **User Profile**  
+Display user info, reputation, badges, and their Q&A activity with pagination.
+
+💼 **Job Finder**  
+Discover jobs with filtering, search, and location-based results.
+
+🏷️ **Tags Page**  
+Explore a list of all tags with question counts, filters, and pagination.
+
+🔖 **Tag Details**  
+View all questions under a specific tag with search and pagination.
+
+🆕 **Ask a Question**  
+User-friendly interface for posting new questions with validation.
+
+✏️ **Edit & Delete**  
+Update or remove your questions and answers with full authorization checks.
+
+🌍 **Global Search**  
+Search across questions, users, tags, and other platform entities.
+
+📱 **Responsive Design**  
+Fully optimized for desktop, tablet, and mobile devices.
+
+⚡ **High Performance**  
+Fast page loads and smooth transitions for better user experience.
+
+🧱 **Modular Architecture**  
+Reusable and maintainable codebase with clearly separated concerns.
 
 ---
 
 ## 📸 Screenshots
-
-You can add screenshots of your project here:
 
 ```markdown
 ![Homepage](./screenshots/home.png)
@@ -89,4 +148,11 @@ You can check out [the Next.js GitHub repository](https://github.com/vercel/next
 
 The easiest way to deploy your Next.js app is to use the [Vercel Platform](https://vercel.com/new?utm_medium=default-template&filter=next.js&utm_source=create-next-app&utm_campaign=create-next-app-readme) from the creators of Next.js.
 
-Check out our [Next.js deployment documentation](https://nextjs.org/docs/app/building-your-application/deploying) for more details.
+---
+
+## 🙌 Acknowledgements
+
+This project is heavily inspired by the **DevOverflow** app built in the  
+[JavaScript Mastery Pro](https://www.jsmastery.pro/) course.  
+Big thanks to @adrianhajdin and the JSM community for the guidance and structured project-based learning experience.
+
