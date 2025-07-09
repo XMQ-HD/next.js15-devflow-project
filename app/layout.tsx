@@ -9,7 +9,7 @@ import { Toaster } from "sonner";
 import { auth } from "@/auth";
 
 const inter = localFont({
-  src: "./fonts/interVF.ttf",
+  src: "./fonts/InterVF.ttf",
   variable: "--font-inter",
   weight: "100 200 300 400 500 600 700 800 900",
 });
