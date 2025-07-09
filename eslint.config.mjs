@@ -11,6 +11,9 @@ const compat = new FlatCompat({
 });
 
 const eslintConfig = [
+  {
+    ignores: ["components/ui/**"],
+  },
   ...compat.extends(
     "next/core-web-vitals",
     "next/typescript",
@@ -52,7 +55,6 @@ const eslintConfig = [
       ],
       "comma-dangle": "off",
     },
-    ignorePatterns: ["components/ui/**"],
   },
   {
     files: ["**/*.ts", "**/*.tsx"],
