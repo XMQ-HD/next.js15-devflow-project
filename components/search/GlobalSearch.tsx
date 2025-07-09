@@ -1,8 +1,11 @@
+"use client";
+
 import { formUrlQuery, removeKeysFromUrlQuery } from "@/lib/url";
 import Image from "next/image";
 import { usePathname, useRouter, useSearchParams } from "next/navigation";
 import React, { useEffect, useRef, useState } from "react";
 import { Input } from "../ui/input";
+import GlobalResult from "../GlobalResult";
 
 const GlobalSearch = () => {
   const router = useRouter();
